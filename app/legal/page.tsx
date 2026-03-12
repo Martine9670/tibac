@@ -43,19 +43,6 @@ export default function LegalPage() {
         </section>
 
         <section className="space-y-4">
-          <h2 className="text-2xl font-black text-white border-b border-zinc-800 pb-3">5. Vos droits (RGPD)</h2>
-          <p className="text-sm leading-relaxed">Conformément au Règlement Général sur la Protection des Données (RGPD — UE 2016/679), vous disposez des droits suivants :</p>
-          <ul className="text-sm space-y-2 ml-4">
-            <li className="flex gap-2"><span className="text-yellow-400">•</span><span><span className="font-medium text-white">Droit d'accès</span> — consulter les données vous concernant.</span></li>
-            <li className="flex gap-2"><span className="text-yellow-400">•</span><span><span className="font-medium text-white">Droit de rectification</span> — corriger vos données depuis votre profil.</span></li>
-            <li className="flex gap-2"><span className="text-yellow-400">•</span><span><span className="font-medium text-white">Droit à l'effacement</span> — supprimer votre compte et toutes vos données.</span></li>
-            <li className="flex gap-2"><span className="text-yellow-400">•</span><span><span className="font-medium text-white">Droit à la portabilité</span> — obtenir une copie de vos données.</span></li>
-            <li className="flex gap-2"><span className="text-yellow-400">•</span><span><span className="font-medium text-white">Droit d'opposition</span> — vous opposer à un traitement de vos données.</span></li>
-          </ul>
-          <p className="text-sm leading-relaxed text-zinc-400">Pour exercer ces droits, contactez-nous via la page d'accueil. Vous pouvez également introduire une réclamation auprès de la <a href="https://www.cnil.fr" className="text-yellow-400 hover:underline">CNIL</a>.</p>
-        </section>
-
-        <section className="space-y-4">
           <h2 className="text-2xl font-black text-white border-b border-zinc-800 pb-3">6. Sécurité des données</h2>
           <p className="text-sm leading-relaxed">Les données sont stockées sur les serveurs de Supabase avec chiffrement en transit (HTTPS) et au repos. Les mots de passe sont hachés et ne sont jamais stockés en clair. L'accès aux données est contrôlé par des politiques de sécurité strictes (Row Level Security).</p>
         </section>
