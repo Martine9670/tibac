@@ -100,8 +100,11 @@ export default async function HomePage() {
         </Link>
       </section>
 
-      <footer className="border-t border-zinc-800 px-4 py-6 text-center text-zinc-600 text-sm">
-        TIBAC — Fait par Martine PINNA avec ❤️ et Next.js
+      <footer className="border-t border-zinc-800 px-4 py-6 text-center text-zinc-600 text-sm space-y-2">
+        <p>TIBAC — Fait par Martine PINNA avec ❤️ et Next.js</p>
+        <a href="/legal" className="text-zinc-500 hover:text-yellow-400 transition-colors text-xs underline">
+          Mentions légales & RGPD
+        </a>
       </footer>
     </main>
   )
