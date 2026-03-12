@@ -15,6 +15,7 @@ export default function RegisterPage() {
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [success, setSuccess] = useState(false)
 
   async function handleRegister() {
     setLoading(true)
@@ -43,9 +44,7 @@ export default function RegisterPage() {
     const { error: signUpError } = await supabase.auth.signUp({
       email,
       password,
-      options: {
-        data: { username: username.trim() },
-      },
+      options: { data: { username: username.trim() } },
     })
 
     if (signUpError) {
@@ -54,8 +53,31 @@ export default function RegisterPage() {
       return
     }
 
-    router.push('/lobby')
-    router.refresh()
+    setLoading(false)
+    setSuccess(true)
+  }
+
+  if (success) {
+    return (
+      <main className="min-h-screen flex items-center justify-center bg-zinc-950 px-4">
+        <div className="w-full max-w-sm text-center space-y-6">
+          <div className="text-6xl">📬</div>
+          <div>
+            <h2 className="text-2xl font-black text-white mb-2">Vérifie ta boîte mail !</h2>
+            <p className="text-zinc-400 text-sm leading-relaxed">
+              Un email de confirmation a été envoyé à <span className="text-yellow-400 font-medium">{email}</span>.
+              <br /><br />
+              Clique sur le lien dans l'email pour activer ton compte, puis connecte-toi.
+            </p>
+          </div>
+          <Link href="/login"
+            className="inline-block w-full bg-yellow-400 hover:bg-yellow-300 text-zinc-900 font-bold rounded-xl py-3 text-sm transition-colors">
+            Aller à la connexion →
+          </Link>
+          <p className="text-zinc-600 text-xs">Tu n'as pas reçu l'email ? Vérifie tes spams.</p>
+        </div>
+      </main>
+    )
   }
 
   return (
