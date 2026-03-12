@@ -1,3 +1,5 @@
+export const dynamic = 'force-dynamic'
+
 import Link from 'next/link'
 
 export default function LandingPage() {
@@ -118,7 +120,7 @@ export default function LandingPage() {
 
       {/* Footer */}
       <footer className="border-t border-zinc-800 px-4 py-6 text-center text-zinc-600 text-sm">
-        TIBAC — Fait avec ❤️ et Next.js
+        TIBAC — Fait par Martine PINNA avec ❤️ et Next.js
       </footer>
 
     </main>
