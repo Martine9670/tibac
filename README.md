@@ -132,3 +132,7 @@ vercel
   - Réponse valide et partagée → **1 point**
   - Réponse invalide ou vide → **0 point**
   - Bonus BAC → **+1 point**
+
+---
+
+Author : Martine PINNA
