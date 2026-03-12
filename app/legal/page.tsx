@@ -43,12 +43,12 @@ export default function LegalPage() {
         </section>
 
         <section className="space-y-4">
-          <h2 className="text-2xl font-black text-white border-b border-zinc-800 pb-3">6. Sécurité des données</h2>
+          <h2 className="text-2xl font-black text-white border-b border-zinc-800 pb-3">5. Sécurité des données</h2>
           <p className="text-sm leading-relaxed">Les données sont stockées sur les serveurs de Supabase avec chiffrement en transit (HTTPS) et au repos. Les mots de passe sont hachés et ne sont jamais stockés en clair. L'accès aux données est contrôlé par des politiques de sécurité strictes (Row Level Security).</p>
         </section>
 
         <section className="space-y-4">
-          <h2 className="text-2xl font-black text-white border-b border-zinc-800 pb-3">7. Cookies</h2>
+          <h2 className="text-2xl font-black text-white border-b border-zinc-800 pb-3">6. Cookies</h2>
           <p className="text-sm leading-relaxed">TIBAC utilise uniquement des cookies techniques strictement nécessaires au fonctionnement de l'authentification (session utilisateur). Aucun cookie publicitaire ou de tracking n'est utilisé.</p>
         </section>
 
