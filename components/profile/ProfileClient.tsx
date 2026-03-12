@@ -3,7 +3,7 @@
 import { useState, useMemo, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { createClient } from '@/lib/supabase/client'
-import { updateProfile } from '@/lib/actions/profile.actions'
+import { updateProfile, deleteAccount } from '@/lib/actions/profile.actions'
 import { useToast } from '@/lib/hooks/useToast'
 
 interface Props {
@@ -55,6 +55,17 @@ export default function ProfileClient({ profile, recentScores, totalPoints, tota
   }
 
   async function handleDeleteAccount() {
+    setDeleting(true)
+    const result = await deleteAccount()
+    if (result?.error) {
+      toast({ type: 'error', message: result.error })
+      setDeleting(false)
+      return
+    }
+    router.push('/')
+  }
+
+  async function handleDeleteAccount_OLD() {
     setDeleting(true)
     const supabase = createClient()
     // Supprimer les données du joueur
@@ -182,6 +193,7 @@ export default function ProfileClient({ profile, recentScores, totalPoints, tota
 
         {/* Suppression de compte */}
         <div className="border border-red-500/20 rounded-2xl p-4 space-y-3">
+          <p className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Zone dangereuse</p>
           {!confirmDelete ? (
             <button onClick={() => setConfirmDelete(true)}
               className="w-full border border-red-500/30 hover:border-red-500/60 text-red-400 hover:text-red-300 font-medium rounded-xl py-2.5 text-sm transition-colors">
@@ -189,7 +201,7 @@ export default function ProfileClient({ profile, recentScores, totalPoints, tota
             </button>
           ) : (
             <div className="space-y-3">
-              <p className="text-red-400 text-sm text-center">⚠️ Cette action est irréversible. Toutes vos données seront supprimées.</p>
+              <p className="text-red-400 text-sm text-center">⚠️ Cette action est irréversible. Toutes tes données seront supprimées.</p>
               <div className="flex gap-2">
                 <button onClick={handleDeleteAccount} disabled={deleting}
                   className="flex-1 bg-red-500 hover:bg-red-400 disabled:opacity-50 text-white font-bold rounded-xl py-2.5 text-sm transition-colors">
