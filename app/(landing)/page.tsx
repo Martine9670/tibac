@@ -15,17 +15,15 @@ export default function LandingPage() {
 
       {/* Hero */}
       <section className="relative px-4 pt-24 pb-20 text-center">
-        {/* Background glow */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-yellow-400/5 rounded-full blur-3xl pointer-events-none" />
 
         <div className="relative">
           <div className="inline-flex items-center gap-2 bg-yellow-400/10 border border-yellow-400/20 text-yellow-400 text-xs font-semibold px-4 py-1.5 rounded-full mb-6">
-            🎲 Le Petit Bac en ligne est arrivé
+            🎲 Le jeu de mots en ligne est arrivé
           </div>
 
           <h1 className="text-6xl md:text-8xl font-black text-white tracking-tighter leading-none mb-4">
-            Petit<br />
-            <span className="text-gradient">Bac</span>
+            <span className="text-gradient">TIBAC</span>
           </h1>
 
           <p className="text-zinc-400 text-lg max-w-md mx-auto mb-10">
@@ -117,7 +115,7 @@ export default function LandingPage() {
 
       {/* Footer */}
       <footer className="border-t border-zinc-800 px-4 py-6 text-center text-zinc-600 text-sm">
-        Petit Bac — Fait avec ❤️ et Next.js
+        TIBAC — Fait par Martine PINNA avec ❤️ et Next.js
       </footer>
 
     </main>
