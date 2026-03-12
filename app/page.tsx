@@ -45,7 +45,7 @@ export default async function HomePage() {
 
       <section className="px-4 py-8">
         <div className="max-w-2xl mx-auto flex justify-center gap-3 flex-wrap">
-          {['T', 'I', 'B', 'A', 'C', '!', '🎲'].map((l, i) => (
+          {['T', 'I', 'B', 'A', 'C', '🎲'].map((l, i) => (
             <div key={l}
               className="w-14 h-14 bg-zinc-900 border border-zinc-800 rounded-2xl flex items-center justify-center text-2xl font-black animate-letter-bounce animate-letter-pulse hover:text-yellow-400 hover:border-yellow-400/50 hover:scale-110 transition-transform cursor-default"
               style={{ animationDelay: `${i * 0.12}s`, animationFillMode: 'both' }}>
