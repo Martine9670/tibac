@@ -24,6 +24,15 @@ export default function Nav() {
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-20 bg-zinc-900/95 backdrop-blur border-t border-zinc-800 px-4 py-2 safe-area-pb">
       <div className="max-w-lg mx-auto flex justify-around items-center">
+        {/* Logo / retour accueil */}
+        <Link
+          href="/"
+          className="flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-zinc-500 hover:text-yellow-400 transition-colors"
+        >
+          <span className="text-xl">🏠</span>
+          <span>Accueil</span>
+        </Link>
+
         {links.map(({ href, label }) => {
           const active = pathname.startsWith(href)
           return (
@@ -40,7 +49,6 @@ export default function Nav() {
           )
         })}
 
-        {/* Bouton déconnexion */}
         <button
           onClick={handleLogout}
           className="flex flex-col items-center gap-0.5 px-3 py-1.5 rounded-xl text-xs font-semibold text-zinc-500 hover:text-red-400 transition-colors"

@@ -27,7 +27,7 @@ export default async function LobbyPage() {
       <div className="max-w-2xl mx-auto space-y-8">
 
         <div className="text-center">
-          <h1 className="text-4xl font-black text-white tracking-tight">🎲 Petit Bac</h1>
+          <h1 className="text-4xl font-black text-white tracking-tight">🎲 TIBAC</h1>
           <p className="mt-1 text-zinc-400 text-sm">
             Bonjour <span className="text-yellow-400 font-semibold">{profile?.username}</span> !
           </p>
