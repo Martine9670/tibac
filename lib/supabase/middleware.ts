@@ -1,11 +1,10 @@
 import { createServerClient } from '@supabase/ssr'
 import { NextResponse, type NextRequest } from 'next/server'
-import type { Database } from '@/types/database.types'
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request })
 
-  const supabase = createServerClient<Database>(
+  const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
@@ -13,7 +12,7 @@ export async function updateSession(request: NextRequest) {
         getAll() {
           return request.cookies.getAll()
         },
-        setAll(cookiesToSet) {
+        setAll(cookiesToSet: { name: string; value: string; options?: any }[]) {
           cookiesToSet.forEach(({ name, value }) =>
             request.cookies.set(name, value)
           )
@@ -26,10 +25,8 @@ export async function updateSession(request: NextRequest) {
     }
   )
 
-  // Rafraîchit la session (ne pas supprimer cette ligne)
   const { data: { user } } = await supabase.auth.getUser()
 
-  // Routes protégées — redirige vers /login si non connecté
   const protectedPaths = ['/lobby', '/game', '/profile']
   const isProtected = protectedPaths.some(path =>
     request.nextUrl.pathname.startsWith(path)
@@ -42,7 +39,6 @@ export async function updateSession(request: NextRequest) {
     return NextResponse.redirect(url)
   }
 
-  // Redirige vers /lobby si déjà connecté et accède à /login ou /register
   const authPaths = ['/login', '/register']
   const isAuthPage = authPaths.some(path =>
     request.nextUrl.pathname.startsWith(path)

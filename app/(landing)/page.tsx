@@ -50,11 +50,14 @@ export default function LandingPage() {
       {/* Demo letters */}
       <section className="px-4 py-8">
         <div className="max-w-2xl mx-auto flex justify-center gap-3 flex-wrap">
-          {['A', 'B', 'C', 'D', 'E', 'F', 'G'].map((l, i) => (
+          {['T', 'I', 'B', 'A', 'C', '!', '🎲'].map((l, i) => (
             <div
               key={l}
-              className="w-14 h-14 bg-zinc-900 border border-zinc-800 rounded-2xl flex items-center justify-center text-2xl font-black text-zinc-600 hover:text-yellow-400 hover:border-yellow-400/30 transition-all cursor-default"
-              style={{ animationDelay: `${i * 0.1}s` }}
+              className="w-14 h-14 bg-zinc-900 border border-zinc-800 rounded-2xl flex items-center justify-center text-2xl font-black animate-letter-bounce animate-letter-pulse hover:text-yellow-400 hover:border-yellow-400/50 hover:scale-110 transition-transform cursor-default"
+              style={{
+                animationDelay: `${i * 0.12}s`,
+                animationFillMode: 'both',
+              }}
             >
               {l}
             </div>
@@ -115,7 +118,7 @@ export default function LandingPage() {
 
       {/* Footer */}
       <footer className="border-t border-zinc-800 px-4 py-6 text-center text-zinc-600 text-sm">
-        TIBAC — Fait par Martine PINNA avec ❤️ et Next.js
+        TIBAC — Fait avec ❤️ et Next.js
       </footer>
 
     </main>
