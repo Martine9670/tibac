@@ -1,19 +1,14 @@
 import { type NextRequest } from 'next/server'
 import { updateSession } from '@/lib/supabase/middleware'
 
+export const runtime = 'nodejs'
+
 export async function middleware(request: NextRequest) {
   return await updateSession(request)
 }
 
 export const config = {
   matcher: [
-    /*
-     * Toutes les routes sauf :
-     * - _next/static (fichiers statiques)
-     * - _next/image (optimisation images)
-     * - favicon.ico, sitemap.xml, robots.txt
-     * - fichiers avec extension (ex: .png, .jpg)
-     */
     '/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)',
   ],
 }
