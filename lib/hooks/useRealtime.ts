@@ -17,16 +17,27 @@ export function useRoom(roomId: string) {
     if (!roomId) return
 
     // Polling de secours toutes les 3s pour attraper les événements manqués
+    let lastRoomStatus = ''
+    let lastRoundId = ''
     const poll = setInterval(async () => {
       const { data: room } = await supabase.from('rooms').select('*').eq('id', roomId).single()
       if (!room) return
-      setRoom(room)
+      // Ne mettre à jour que si le statut a changé
+      if (room.status !== lastRoomStatus) {
+        lastRoomStatus = room.status
+        setRoom(room)
+        if (room.status === 'finished') setPhase('finished')
+      }
       if (room.status === 'playing') {
         const { data: round } = await supabase
           .from('rounds').select('*').eq('room_id', roomId).eq('status', 'active').single()
-        if (round) { setCurrentRound(round); setPhase('letter-reveal') }
+        // Ne mettre à jour que si c'est un nouveau round
+        if (round && round.id !== lastRoundId) {
+          lastRoundId = round.id
+          setCurrentRound(round)
+          setPhase('letter-reveal')
+        }
       }
-      if (room.status === 'finished') setPhase('finished')
     }, 3000)
 
     const channel = supabase
