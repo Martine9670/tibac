@@ -13,11 +13,11 @@ export const viewport: Viewport = {
 }
 
 export const metadata: Metadata = {
-  title: 'Petit Bac — Le jeu de mots en ligne',
-  description: 'Joue au Petit Bac en multijoueur temps réel avec tes amis.',
-  manifest: '/manifest.json',
-  appleWebApp: { capable: true, statusBarStyle: 'black-translucent', title: 'Petit Bac' },
-  openGraph: { title: 'Petit Bac', description: 'Le jeu classique de mots en multijoueur temps réel', type: 'website' },
+  title: 'TIBAC — Le jeu de mots en ligne',
+  description: 'Joue au TIBAC en multijoueur temps réel avec tes amis.',
+  manifest: '/site.webmanifest',
+  appleWebApp: { capable: true, statusBarStyle: 'black-translucent', title: 'TIBAC' },
+  openGraph: { title: 'TIBAC', description: 'Le jeu classique de mots en multijoueur temps réel', type: 'website' },
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -25,7 +25,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="fr" className="dark">
       <head>
         <meta name="mobile-web-app-capable" content="yes" />
-        <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+        <link rel="icon" href="/favicon.ico" />
+        <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
       </head>
       <body className={`${inter.className} bg-zinc-950 text-white antialiased`}>
         <ToastProvider>{children}</ToastProvider>
