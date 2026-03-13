@@ -130,31 +130,32 @@ export default function PlayingPhase({ round, categories, timeLimit, currentUser
 
       {/* Actions */}
       <div className="space-y-3 pt-2">
-        {!bacCalled ? (
-          <button
-            onClick={handleBac}
-            disabled={callingBac}
-            className="w-full bg-yellow-400 hover:bg-yellow-300 active:scale-95 disabled:opacity-60 text-zinc-900 font-black text-2xl rounded-2xl py-5 transition-all shadow-lg shadow-yellow-400/20"
-          >
-            {callingBac ? '⏳ ...' : '🛑 BAC !'}
-          </button>
-        ) : (
-          <div className="w-full bg-green-500/10 border border-green-500/30 text-green-400 font-bold text-center rounded-2xl py-4">
-            ✓ BAC appelé ! En attente des autres...
-          </div>
-        )}
-
         {!submitted && !bacCalled && (
           <button onClick={handleSubmit}
-            className="w-full bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-medium rounded-xl py-3 text-sm transition-colors">
-            Soumettre sans appeler BAC
+            className="w-full bg-yellow-400 hover:bg-yellow-300 active:scale-95 text-zinc-900 font-black text-lg rounded-2xl py-4 transition-all">
+            ✅ Soumettre mes réponses
           </button>
         )}
 
         {submitted && !bacCalled && (
-          <p className="text-center text-zinc-500 text-sm animate-pulse">
-            ✓ Soumis — En attente que quelqu&apos;un crie BAC !
-          </p>
+          <>
+            <button
+              onClick={handleBac}
+              disabled={callingBac}
+              className="w-full bg-red-500 hover:bg-red-400 active:scale-95 disabled:opacity-60 text-white font-black text-2xl rounded-2xl py-5 transition-all shadow-lg shadow-red-500/20"
+            >
+              {callingBac ? '⏳ ...' : '🛑 BAC !'}
+            </button>
+            <p className="text-center text-zinc-500 text-sm animate-pulse">
+              ✓ Soumis — Clique BAC pour arrêter la manche !
+            </p>
+          </>
+        )}
+
+        {bacCalled && (
+          <div className="w-full bg-green-500/10 border border-green-500/30 text-green-400 font-bold text-center rounded-2xl py-4">
+            ✓ BAC appelé ! En attente des autres...
+          </div>
         )}
       </div>
     </div>
