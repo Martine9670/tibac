@@ -16,6 +16,11 @@ export default function CreateRoomForm({ categories }: Props) {
   const [maxPlayers, setMaxPlayers] = useState(6)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+  const [search, setSearch] = useState('')
+
+  const filtered = categories.filter((c) =>
+    c.name.toLowerCase().includes(search.toLowerCase())
+  )
 
   function toggleCategory(id: string) {
     setSelectedCats((prev) =>
@@ -25,6 +30,8 @@ export default function CreateRoomForm({ categories }: Props) {
 
   function selectAll() { setSelectedCats(allIds) }
   function deselectAll() { setSelectedCats([]) }
+  function selectFiltered() { setSelectedCats((prev) => [...new Set([...prev, ...filtered.map(c => c.id)])]) }
+  function deselectFiltered() { setSelectedCats((prev) => prev.filter(id => !filtered.map(c => c.id).includes(id))) }
 
   async function handleSubmit() {
     if (selectedCats.length < 2) {
@@ -50,38 +57,54 @@ export default function CreateRoomForm({ categories }: Props) {
             Catégories ({selectedCats.length}/{categories.length})
           </label>
           <div className="flex gap-2">
-            <button type="button" onClick={selectAll}
-              className="text-xs text-yellow-400 hover:text-yellow-300 transition-colors">
-              Tout
-            </button>
+            <button type="button" onClick={selectAll} className="text-xs text-yellow-400 hover:text-yellow-300 transition-colors">Tout</button>
             <span className="text-zinc-600">·</span>
-            <button type="button" onClick={deselectAll}
-              className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors">
-              Aucun
-            </button>
+            <button type="button" onClick={deselectAll} className="text-xs text-zinc-500 hover:text-zinc-300 transition-colors">Aucun</button>
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-1.5 max-h-64 overflow-y-auto pr-1">
-          {categories.map((cat) => {
+        {/* Recherche */}
+        <input
+          type="text"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder="🔍 Rechercher une catégorie..."
+          className="w-full bg-zinc-800 border border-zinc-700 rounded-lg px-3 py-2 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-yellow-400 text-xs"
+        />
+
+        {search && (
+          <div className="flex gap-2 text-xs">
+            <button type="button" onClick={selectFiltered} className="text-yellow-400 hover:text-yellow-300">Sélectionner ces {filtered.length}</button>
+            <span className="text-zinc-600">·</span>
+            <button type="button" onClick={deselectFiltered} className="text-zinc-500 hover:text-zinc-300">Désélectionner ces {filtered.length}</button>
+          </div>
+        )}
+
+        <div className="space-y-1 max-h-56 overflow-y-auto pr-1">
+          {filtered.map((cat) => {
             const isSelected = selectedCats.includes(cat.id)
             return (
               <button
                 type="button"
                 key={cat.id}
                 onClick={() => toggleCategory(cat.id)}
-                className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-medium border transition-colors text-left ${
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm border transition-colors text-left ${
                   isSelected
                     ? 'bg-yellow-400/10 border-yellow-400/50 text-yellow-300'
                     : 'bg-zinc-800 border-zinc-700 text-zinc-400 hover:border-zinc-500'
                 }`}
               >
-                <span>{cat.emoji}</span>
-                <span className="truncate">{cat.name}</span>
-                {isSelected && <span className="ml-auto text-yellow-400">✓</span>}
+                <span className="text-base shrink-0">{cat.emoji}</span>
+                <span className="flex-1">{cat.name}</span>
+                <span className={`shrink-0 font-bold ${isSelected ? 'text-yellow-400' : 'text-zinc-700'}`}>
+                  {isSelected ? '✓' : '○'}
+                </span>
               </button>
             )
           })}
+          {filtered.length === 0 && (
+            <p className="text-zinc-600 text-xs text-center py-4">Aucune catégorie trouvée</p>
+          )}
         </div>
       </div>
 
@@ -131,17 +154,11 @@ export default function CreateRoomForm({ categories }: Props) {
       </div>
 
       {error && (
-        <p className="text-red-400 text-xs bg-red-400/10 border border-red-400/20 rounded-lg px-3 py-2">
-          {error}
-        </p>
+        <p className="text-red-400 text-xs bg-red-400/10 border border-red-400/20 rounded-lg px-3 py-2">{error}</p>
       )}
 
-      <button
-        type="button"
-        onClick={handleSubmit}
-        disabled={loading || selectedCats.length < 2}
-        className="w-full bg-yellow-400 hover:bg-yellow-300 disabled:opacity-40 disabled:cursor-not-allowed text-zinc-900 font-bold rounded-lg py-2.5 text-sm transition-colors"
-      >
+      <button type="button" onClick={handleSubmit} disabled={loading || selectedCats.length < 2}
+        className="w-full bg-yellow-400 hover:bg-yellow-300 disabled:opacity-40 disabled:cursor-not-allowed text-zinc-900 font-bold rounded-lg py-2.5 text-sm transition-colors">
         {loading ? 'Création...' : `Créer la salle (${selectedCats.length} catégories)`}
       </button>
     </div>
