@@ -11,9 +11,23 @@ const supabase = createClient()
 export function useRoom(roomId: string) {
   const setRoom = useGameStore((s) => s.setRoom)
   const setPhase = useGameStore((s) => s.setPhase)
+  const setCurrentRound = useGameStore((s) => s.setCurrentRound)
 
   useEffect(() => {
     if (!roomId) return
+
+    // Polling de secours toutes les 3s pour attraper les événements manqués
+    const poll = setInterval(async () => {
+      const { data: room } = await supabase.from('rooms').select('*').eq('id', roomId).single()
+      if (!room) return
+      setRoom(room)
+      if (room.status === 'playing') {
+        const { data: round } = await supabase
+          .from('rounds').select('*').eq('room_id', roomId).eq('status', 'active').single()
+        if (round) { setCurrentRound(round); setPhase('letter-reveal') }
+      }
+      if (room.status === 'finished') setPhase('finished')
+    }, 3000)
 
     const channel = supabase
       .channel(`room:${roomId}`)
@@ -28,8 +42,11 @@ export function useRoom(roomId: string) {
       )
       .subscribe()
 
-    return () => { supabase.removeChannel(channel) }
-  }, [roomId, setRoom, setPhase])
+    return () => {
+      clearInterval(poll)
+      supabase.removeChannel(channel)
+    }
+  }, [roomId, setRoom, setPhase, setCurrentRound])
 }
 
 // ============================================================
