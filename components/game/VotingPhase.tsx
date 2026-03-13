@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useGameStore } from '@/lib/stores/gameStore'
 import { finishVoting } from '@/lib/actions/round.actions'
+import { voteOnAnswer } from '@/lib/actions/answer.actions'
 import type { Round, Category } from '@/types/game.types'
 
 interface Props {
@@ -37,8 +38,11 @@ export default function VotingPhase({ round, categories, currentUserId, isHost, 
   const { answers, players } = useGameStore()
   const [results, setResults] = useState<ValidationResult | null>(null)
   const [finishing, setFinishing] = useState(false)
+  const [votes, setVotes] = useState<Record<string, boolean | null>>({})
+  const [hasVoted, setHasVoted] = useState(false)
 
   const myAnswers = answers.filter((a) => a.player_id === currentUserId && a.round_id === round.id)
+  const otherAnswers = answers.filter((a) => a.player_id !== currentUserId && a.round_id === round.id)
   const isSolo = players.length === 1
 
   useEffect(() => {
@@ -52,10 +56,18 @@ export default function VotingPhase({ round, categories, currentUserId, isHost, 
     }
   }, [myAnswers.length])
 
+  async function handleVote(answerId: string, isValid: boolean) {
+    setVotes((prev) => ({ ...prev, [answerId]: isValid }))
+    await voteOnAnswer(answerId, isValid)
+  }
+
+  async function handleFinishVoting() {
+    setHasVoted(true)
+  }
+
   async function handleFinish() {
     setFinishing(true)
     if (isSolo && results) {
-      // Passer les vrais scores à la server action
       const soloScores: Record<string, number> = {}
       for (const [catId, r] of Object.entries(results)) {
         soloScores[catId] = r.points
@@ -66,6 +78,7 @@ export default function VotingPhase({ round, categories, currentUserId, isHost, 
     }
   }
 
+  // Mode solo
   if (isSolo && results) {
     const total = Object.values(results).reduce((acc, r) => acc + r.points, 0)
     return (
@@ -74,7 +87,6 @@ export default function VotingPhase({ round, categories, currentUserId, isHost, 
           <p className="text-zinc-500 text-xs uppercase tracking-wider mb-1">Résultats — Lettre {round.letter}</p>
           <p className="text-yellow-400 font-black text-4xl">+{total} pts</p>
         </div>
-
         <div className="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden">
           {categories.map((cat, i) => {
             const r = results[cat.id]
@@ -85,9 +97,7 @@ export default function VotingPhase({ round, categories, currentUserId, isHost, 
                   <span className="text-xl">{cat.emoji}</span>
                   <div>
                     <p className="text-zinc-400 text-xs uppercase tracking-wider">{cat.name}</p>
-                    <p className={`font-medium text-sm ${r?.valid ? 'text-white' : 'text-zinc-500 line-through'}`}>
-                      {answer?.value || '—'}
-                    </p>
+                    <p className={`font-medium text-sm ${r?.valid ? 'text-white' : 'text-zinc-500 line-through'}`}>{answer?.value || '—'}</p>
                     {r && !r.valid && <p className="text-red-400 text-xs">{r.reason}</p>}
                   </div>
                 </div>
@@ -98,7 +108,6 @@ export default function VotingPhase({ round, categories, currentUserId, isHost, 
             )
           })}
         </div>
-
         <button onClick={handleFinish} disabled={finishing}
           className="w-full bg-yellow-400 hover:bg-yellow-300 disabled:opacity-50 text-zinc-900 font-black rounded-xl py-4 text-base transition-all active:scale-95">
           {finishing ? 'Chargement...' : 'Voir le résumé →'}
@@ -107,41 +116,96 @@ export default function VotingPhase({ round, categories, currentUserId, isHost, 
     )
   }
 
-  // Mode multijoueur
+  // Mode multijoueur — phase de vote
+  if (!hasVoted && otherAnswers.length > 0) {
+    return (
+      <div className="max-w-lg mx-auto pt-6 space-y-5">
+        <div className="text-center">
+          <p className="text-zinc-500 text-xs uppercase tracking-wider mb-2">Vote sur les réponses</p>
+          <p className="text-white font-bold">Lettre : <span className="text-yellow-400 font-black text-2xl">{round.letter}</span></p>
+          <p className="text-zinc-500 text-xs mt-1">✅ valide · ❌ invalide</p>
+        </div>
+
+        <div className="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden">
+          {categories.map((cat, i) => {
+            const catAnswers = otherAnswers.filter((a) => a.category_id === cat.id)
+            if (catAnswers.length === 0) return null
+            return (
+              <div key={cat.id} className={`p-4 ${i < categories.length - 1 ? 'border-b border-zinc-800' : ''}`}>
+                <p className="text-zinc-400 text-xs uppercase tracking-wider mb-2">{cat.emoji} {cat.name}</p>
+                <div className="space-y-2">
+                  {catAnswers.map((a) => {
+                    const player = players.find((p) => p.player_id === a.player_id)
+                    const profile = (player as any)?.profiles
+                    const vote = votes[a.id]
+                    return (
+                      <div key={a.id} className="flex items-center justify-between bg-zinc-800 rounded-lg px-3 py-2">
+                        <div>
+                          <p className="text-zinc-500 text-xs">{profile?.username ?? 'Joueur'}</p>
+                          <p className="text-white text-sm font-medium">{a.value || '—'}</p>
+                        </div>
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => handleVote(a.id, true)}
+                            className={`w-9 h-9 rounded-lg text-lg transition-all ${vote === true ? 'bg-green-500 text-white' : 'bg-zinc-700 hover:bg-green-500/30 text-zinc-400'}`}>
+                            ✅
+                          </button>
+                          <button
+                            onClick={() => handleVote(a.id, false)}
+                            className={`w-9 h-9 rounded-lg text-lg transition-all ${vote === false ? 'bg-red-500 text-white' : 'bg-zinc-700 hover:bg-red-500/30 text-zinc-400'}`}>
+                            ❌
+                          </button>
+                        </div>
+                      </div>
+                    )
+                  })}
+                </div>
+              </div>
+            )
+          })}
+        </div>
+
+        <button onClick={handleFinishVoting}
+          className="w-full bg-yellow-400 hover:bg-yellow-300 text-zinc-900 font-black rounded-xl py-4 text-base transition-all active:scale-95">
+          Valider mes votes →
+        </button>
+      </div>
+    )
+  }
+
+  // Attente que l'hôte finalise
   return (
     <div className="max-w-lg mx-auto pt-6 space-y-5">
       <div className="text-center">
         <p className="text-zinc-500 text-xs uppercase tracking-wider mb-2">Phase de vote</p>
         <p className="text-white font-bold">Lettre : <span className="text-yellow-400 font-black text-2xl">{round.letter}</span></p>
       </div>
+
+      {/* Mes réponses */}
       <div className="bg-zinc-900 border border-zinc-800 rounded-2xl overflow-hidden">
+        <p className="text-zinc-400 text-xs uppercase tracking-wider p-4 pb-2">Mes réponses</p>
         {categories.map((cat, i) => {
-          const allCatAnswers = answers.filter((a) => a.category_id === cat.id && a.round_id === round.id)
+          const answer = myAnswers.find((a) => a.category_id === cat.id)
           return (
-            <div key={cat.id} className={`p-4 ${i < categories.length - 1 ? 'border-b border-zinc-800' : ''}`}>
-              <p className="text-zinc-400 text-xs uppercase tracking-wider mb-2">{cat.emoji} {cat.name}</p>
-              <div className="space-y-1.5">
-                {allCatAnswers.map((a) => {
-                  const player = players.find((p) => p.player_id === a.player_id)
-                  const profile = (player as any)?.profiles
-                  return (
-                    <div key={a.id} className="flex items-center justify-between bg-zinc-800 rounded-lg px-3 py-2">
-                      <div>
-                        <p className="text-zinc-500 text-xs">{profile?.username ?? 'Joueur'}</p>
-                        <p className="text-white text-sm font-medium">{a.value || '—'}</p>
-                      </div>
-                    </div>
-                  )
-                })}
+            <div key={cat.id} className={`flex items-center gap-3 p-4 ${i < categories.length - 1 ? 'border-b border-zinc-800' : ''}`}>
+              <span className="text-xl">{cat.emoji}</span>
+              <div>
+                <p className="text-zinc-400 text-xs uppercase tracking-wider">{cat.name}</p>
+                <p className="text-white text-sm font-medium">{answer?.value || '—'}</p>
               </div>
             </div>
           )
         })}
       </div>
+
+      {hasVoted && (
+        <p className="text-center text-green-400 text-sm">✓ Votes enregistrés — En attente des autres joueurs...</p>
+      )}
+
       {isHost && (
         <button onClick={handleFinish} disabled={finishing}
           className="w-full bg-yellow-400 hover:bg-yellow-300 disabled:opacity-50 text-zinc-900 font-black rounded-xl py-4 text-base transition-all active:scale-95">
-          {finishing ? 'Calcul des scores...' : 'Valider et voir les scores →'}
+          {finishing ? 'Calcul des scores...' : 'Terminer le vote →'}
         </button>
       )}
     </div>
