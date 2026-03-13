@@ -7,7 +7,6 @@ import { createClient } from '@/lib/supabase/client'
 const links = [
   { href: '/lobby', label: '🎲 Nouvelle partie' },
   { href: '/leaderboard', label: '🏆 Classement' },
-  { href: '/categories', label: '📂 Catégories' },
   { href: '/profile', label: '👤 Profil' },
 ]
 
