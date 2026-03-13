@@ -131,7 +131,7 @@ export default async function ResultsPage({ params }: Props) {
           href="/lobby"
           className="block w-full text-center bg-yellow-400 hover:bg-yellow-300 text-zinc-900 font-black rounded-xl py-3 text-base transition-colors"
         >
-          Rejouer 🎲
+          Retour au lobby 🎲
         </Link>
 
       </div>
