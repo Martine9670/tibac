@@ -151,9 +151,9 @@ export default function ProfileClient({ profile, recentScores, totalPoints, tota
 
         <div className="grid grid-cols-3 gap-3">
           {[
-            { label: 'Points totaux', value: totalPoints, emoji: '⭐' },
+            { label: 'Total points', value: totalPoints, emoji: '⭐' },
             { label: 'Parties jouées', value: currentProfile?.games_played ?? 0, emoji: '🎮' },
-            { label: 'BAC ! criés', value: totalBacs, emoji: '🛑' },
+            { label: 'Total BAC', value: totalBacs, emoji: '🛑' },
           ].map((stat) => (
             <div key={stat.label} className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 text-center">
               <p className="text-2xl mb-1">{stat.emoji}</p>
@@ -193,7 +193,6 @@ export default function ProfileClient({ profile, recentScores, totalPoints, tota
 
         {/* Suppression de compte */}
         <div className="border border-red-500/20 rounded-2xl p-4 space-y-3">
-          <p className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Zone dangereuse</p>
           {!confirmDelete ? (
             <button onClick={() => setConfirmDelete(true)}
               className="w-full border border-red-500/30 hover:border-red-500/60 text-red-400 hover:text-red-300 font-medium rounded-xl py-2.5 text-sm transition-colors">
