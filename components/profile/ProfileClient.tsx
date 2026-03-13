@@ -151,8 +151,8 @@ export default function ProfileClient({ profile, recentScores, totalPoints, tota
 
         <div className="grid grid-cols-3 gap-3">
           {[
-            { label: 'Total points', value: totalPoints, emoji: '⭐' },
-            { label: 'Parties jouées', value: currentProfile?.games_played ?? 0, emoji: '🎮' },
+            { label: 'Total POINTS', value: totalPoints, emoji: '⭐' },
+            { label: 'Total PARTIES', value: currentProfile?.games_played ?? 0, emoji: '🎮' },
             { label: 'Total BAC', value: totalBacs, emoji: '🛑' },
           ].map((stat) => (
             <div key={stat.label} className="bg-zinc-900 border border-zinc-800 rounded-2xl p-4 text-center">
