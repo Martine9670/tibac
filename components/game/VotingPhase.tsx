@@ -4,7 +4,8 @@ import { useEffect, useState } from 'react'
 import { useGameStore } from '@/lib/stores/gameStore'
 import { finishVoting } from '@/lib/actions/round.actions'
 import { voteOnAnswer } from '@/lib/actions/answer.actions'
-import type { Round, Category } from '@/types/game.types'
+import { createClient } from '@/lib/supabase/client'
+import type { Round, Category, Answer } from '@/types/game.types'
 
 interface Props {
   round: Round
@@ -35,15 +36,27 @@ function validateAnswer(value: string, letter: string, categoryId: string = ''):
 }
 
 export default function VotingPhase({ round, categories, currentUserId, isHost, roomId }: Props) {
-  const { answers, players } = useGameStore()
+  const { answers: storeAnswers, players } = useGameStore()
   const [results, setResults] = useState<ValidationResult | null>(null)
   const [finishing, setFinishing] = useState(false)
   const [votes, setVotes] = useState<Record<string, boolean | null>>({})
   const [hasVoted, setHasVoted] = useState(false)
+  const [allAnswers, setAllAnswers] = useState<Answer[]>(storeAnswers.filter(a => a.round_id === round.id))
+  const [loaded, setLoaded] = useState(false)
 
-  const myAnswers = answers.filter((a) => a.player_id === currentUserId && a.round_id === round.id)
-  const otherAnswers = answers.filter((a) => a.player_id !== currentUserId && a.round_id === round.id)
   const isSolo = players.length === 1
+
+  // Charger toutes les réponses depuis Supabase au montage
+  useEffect(() => {
+    const supabase = createClient()
+    supabase.from('answers').select('*').eq('round_id', round.id).then(({ data }) => {
+      if (data && data.length > 0) setAllAnswers(data as Answer[])
+      setLoaded(true)
+    })
+  }, [round.id])
+
+  const myAnswers = allAnswers.filter((a) => a.player_id === currentUserId)
+  const otherAnswers = allAnswers.filter((a) => a.player_id !== currentUserId)
 
   useEffect(() => {
     if (isSolo && myAnswers.length > 0 && !results) {
@@ -76,6 +89,14 @@ export default function VotingPhase({ round, categories, currentUserId, isHost, 
     } else {
       await finishVoting(round.id)
     }
+  }
+
+  if (!loaded) {
+    return (
+      <div className="max-w-lg mx-auto pt-6 text-center">
+        <p className="text-zinc-500 animate-pulse">Chargement des réponses...</p>
+      </div>
+    )
   }
 
   // Mode solo
